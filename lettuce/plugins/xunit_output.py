@@ -42,6 +42,12 @@ def total_seconds(td):
 def enable(filename=None):
 
     doc = minidom.Document()
+    
+    pi = doc.createProcessingInstruction('xml-stylesheet',
+                                     'type="text/xsl" href="lettucetests.xsl"')
+    root = doc.firstChild
+    doc.insertBefore(pi, root)
+    
     root = doc.createElement("testsuite")
     root.setAttribute("name", "lettuce")
     root.setAttribute("hostname", "localhost")
