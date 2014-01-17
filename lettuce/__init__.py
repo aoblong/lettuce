@@ -44,8 +44,7 @@ from lettuce.exceptions import StepLoadingError
 from lettuce.plugins import (
     xunit_output,
     subunit_output,
-    autopdb,
-    smtp_mail_queue,
+    autopdb    
 )
 from lettuce import fs
 from lettuce import exceptions
