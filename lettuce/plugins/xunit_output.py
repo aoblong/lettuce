@@ -81,6 +81,28 @@ def enable(filename=None):
             failure.setAttribute("type", step.why.exception.__class__.__name__)
             failure.appendChild(cdata)
             tc.appendChild(failure)
+       
+        if len(step.hashes) > 0:                        
+            table_node = doc.createElement("table")                                                                                        
+            is_header_added = False            
+            is_header_added = len(step.hashes[0])
+            item = step.hashes[0]                            
+            row_node = doc.createElement("row")                     
+            for k,v in item.items():                                                                                                        
+                    cell_node = doc.createElement("cell")
+                    cell_node.setAttribute("value", k)                    
+                    is_header_added -=1
+                    row_node.appendChild(cell_node)                                                                                                                                                        
+            table_node.appendChild(row_node)
+            
+            for item in step.hashes:                                
+                row_node = doc.createElement("row")                
+                for k,v in item.items():
+                    cell_node = doc.createElement("cell")
+                    cell_node.setAttribute("value", v)                    
+                    row_node.appendChild(cell_node)                                                                                                                                                                                
+                table_node.appendChild(row_node)
+            tc.appendChild(table_node)
 
         root.appendChild(tc)
 
