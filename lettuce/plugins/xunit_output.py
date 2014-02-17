@@ -62,8 +62,7 @@ def enable(filename=None):
     def create_test_case_step(step):
         parent = step.scenario or step.background
         if getattr(parent, 'outlines', None):
-            return
-        
+            return        
         name = getattr(parent, 'name', 'Background')    # Background sections are nameless
         classname = u"%s : %s" % (parent.feature.name, name)
         tc = doc.createElement("testcase")
@@ -87,7 +86,20 @@ def enable(filename=None):
             failure.setAttribute("type", step.why.exception.__class__.__name__)
             failure.appendChild(cdata)
             tc.appendChild(failure)
-       
+        
+        #Business rules coverage node
+        coverage_node = doc.createElement("coverage-node")        
+        for tag in step.scenario.tags:
+            if 'br=' in tag:                
+                tag = tag.replace('br=','')
+                for splited_br in tag.split(';'):
+                    if len(splited_br) > 0:
+                        br_rule_node = doc.createElement('business-rule')
+                        br_rule_text_noe = doc.createTextNode(splited_br)                    
+                        br_rule_node.appendChild(br_rule_text_noe)
+                        coverage_node.appendChild(br_rule_node)                                 
+        tc.appendChild(coverage_node)
+        
         if len(step.hashes) > 0:                        
             table_node = doc.createElement("table")                                                                                        
             is_header_added = False            
@@ -133,7 +145,11 @@ def enable(filename=None):
             tc.appendChild(failure)
 
         root.appendChild(tc)
-
+    
+    @after.each_scenario
+    def write_brs(scenario):
+        
+        pass
     @after.all
     def output_xml(total):
         root.setAttribute("tests", str(total.steps))
