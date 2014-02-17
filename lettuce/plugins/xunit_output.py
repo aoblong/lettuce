@@ -68,6 +68,36 @@ def enable(filename=None):
         tc = doc.createElement("testcase")
         tc.setAttribute("classname", classname)
         tc.setAttribute("name", step.sentence)
+        
+        #Business rules coverage node
+        coverage_node = doc.createElement("coverage-node")        
+        external_id_tag = ''
+        internal_id_tag = ''
+        br_tag = ''
+        
+        for tag in step.scenario.tags:
+            if 'br=' in tag:  
+                br_tag = tag
+                
+            if 'external_id' in tag:
+                external_id_tag = tag
+            
+            if 'internal_id' in tag:
+                internal_id_tag = tag
+                                 
+        br_tag = br_tag.replace('br=','')
+        for splited_br in br_tag.split(';'):
+            if len(splited_br) > 0:
+                br_rule_node = doc.createElement('business-rule')
+                br_rule_text_noe = doc.createTextNode(splited_br)                    
+                br_rule_node.appendChild(br_rule_text_noe)
+                coverage_node.appendChild(br_rule_node)                                         
+        tc.appendChild(coverage_node)
+        internal_id_tag = internal_id_tag.replace('internal_id=','')        
+        external_id_tag = external_id_tag.replace('external_id=','')
+        tc.setAttribute("internalID", internal_id_tag)
+        tc.setAttribute("externalID ", external_id_tag)  
+        
         try:
             tc.setAttribute("time", str(total_seconds((datetime.now() - step.started))))
         except AttributeError:
@@ -85,20 +115,7 @@ def enable(filename=None):
                 failure.setAttribute("message", step.why.cause)
             failure.setAttribute("type", step.why.exception.__class__.__name__)
             failure.appendChild(cdata)
-            tc.appendChild(failure)
-        
-        #Business rules coverage node
-        coverage_node = doc.createElement("coverage-node")        
-        for tag in step.scenario.tags:
-            if 'br=' in tag:                
-                tag = tag.replace('br=','')
-                for splited_br in tag.split(';'):
-                    if len(splited_br) > 0:
-                        br_rule_node = doc.createElement('business-rule')
-                        br_rule_text_noe = doc.createTextNode(splited_br)                    
-                        br_rule_node.appendChild(br_rule_text_noe)
-                        coverage_node.appendChild(br_rule_node)                                 
-        tc.appendChild(coverage_node)
+            tc.appendChild(failure)      
         
         if len(step.hashes) > 0:                        
             table_node = doc.createElement("table")                                                                                        
