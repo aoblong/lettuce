@@ -39,11 +39,11 @@ if os.name.lower() == 'nt':
 
 setup(
     name='lettuce',
-    version='0.2.21',
+    version='0.2.22',
     description='Behaviour Driven Development for python',
     author='Gabriel Falcao',
     author_email='gabriel@nacaolivre.org',
-    url='http://lettuce.it',
+    url='https://github.com/aoblong/lettuce',
     packages=get_packages(),
     install_requires=required_modules,
     entry_points={
