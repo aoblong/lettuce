@@ -70,7 +70,7 @@ def enable(filename=None):
         tc.setAttribute("name", step.sentence)
         
         #Business rules coverage node
-        coverage_node = doc.createElement("coverage-node")        
+        coverage_node = doc.createElement("coverage")        
         external_id_tag = ''
         internal_id_tag = ''
         br_tag = ''
