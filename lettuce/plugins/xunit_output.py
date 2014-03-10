@@ -74,16 +74,16 @@ def enable(filename=None):
         external_id_tag = ''
         internal_id_tag = ''
         br_tag = ''
-        
-        for tag in step.scenario.tags:
-            if 'br=' in tag:  
-                br_tag = tag
+        if step.scenario is not None:
+            for tag in step.scenario.tags:
+                if 'br=' in tag:  
+                    br_tag = tag
+                    
+                if 'external_id' in tag:
+                    external_id_tag = tag
                 
-            if 'external_id' in tag:
-                external_id_tag = tag
-            
-            if 'internal_id' in tag:
-                internal_id_tag = tag
+                if 'internal_id' in tag:
+                    internal_id_tag = tag
                                  
         br_tag = br_tag.replace('br=','')
         for splited_br in br_tag.split(';'):
