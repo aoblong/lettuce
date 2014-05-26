@@ -20,7 +20,7 @@ import re
 import codecs
 import unicodedata
 
-from copy import deepcopy
+from copy import copy
 from fuzzywuzzy import fuzz
 from itertools import chain
 from random import shuffle
@@ -275,7 +275,7 @@ class Step(object):
             sentence = evaluate(sentence)
             hashes = map(evaluate_hash_value, hashes)
 
-        new = deepcopy(self)
+        new = copy(self)
         new.sentence = sentence
         new.hashes = hashes
         new.display = display_step
