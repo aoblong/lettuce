@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-__version__ = version = '0.2.23'
+__version__ = version = '0.2.24'
 
 release = 'kryptonite'
 
@@ -91,7 +91,7 @@ class Runner(object):
                  enable_xunit=False, xunit_filename=None,
                  enable_subunit=False, subunit_filename=None,
                  tags=None, failfast=False, auto_pdb=False,
-                 smtp_queue=None):
+                 smtp_queue=None, iterations=1):
 
         """ lettuce.Runner will try to find a terrain.py file and
         import it from within `base_path`
@@ -109,6 +109,7 @@ class Runner(object):
         self.verbosity = verbosity
         self.scenarios = scenarios and map(int, scenarios.split(",")) or None
         self.failfast = failfast
+        self.iterations = int(iterations)
         if auto_pdb:
             autopdb.enable(self)
 
@@ -167,11 +168,12 @@ class Runner(object):
         try:
             for filename in features_files:
                 feature = Feature.from_file(filename)
-                results.append(
-                    feature.run(self.scenarios,
-                                tags=self.tags,
-                                random=self.random,
-                                failfast=self.failfast))
+                for i in range(self.iterations):
+                    results.append(
+                        feature.run(self.scenarios,
+                                    tags=self.tags,
+                                    random=self.random,
+                                    failfast=self.failfast))
 
         except exceptions.LettuceSyntaxError, e:
             sys.stderr.write(e.msg)

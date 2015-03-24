@@ -90,6 +90,11 @@ def main(args=sys.argv[1:]):
                       action="store_true",
                       help='Launches an interactive debugger upon error')
 
+    parser.add_option("-l", "--loop",
+                      dest="iterations",
+                      default=1,
+                      help='Tells lettuce how many times run the scenario in loop')
+
     options, args = parser.parse_args(args)
     if args:
         base_path = os.path.abspath(args[0])
@@ -115,6 +120,7 @@ def main(args=sys.argv[1:]):
         failfast=options.failfast,
         auto_pdb=options.auto_pdb,
         tags=tags,
+        iterations=options.iterations
     )
 
     result = runner.run()

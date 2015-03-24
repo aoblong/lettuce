@@ -61,8 +61,7 @@ def enable(filename=None):
     @after.each_step
     def create_test_case_step(step):
         parent = step.scenario or step.background
-        if getattr(parent, 'outlines', None):
-            return        
+
         name = getattr(parent, 'name', 'Background')    # Background sections are nameless
         classname = u"%s : %s" % (parent.feature.name, name)
         tc = doc.createElement("testcase")
@@ -84,7 +83,6 @@ def enable(filename=None):
                 
                 if 'internal_id' in tag:
                     internal_id_tag = tag
-                                 
         br_tag = br_tag.replace('br=','')
         for splited_br in br_tag.split(';'):
             if len(splited_br) > 0:
@@ -138,59 +136,12 @@ def enable(filename=None):
                     row_node.appendChild(cell_node)                                                                                                                                                                                
                 table_node.appendChild(row_node)
             tc.appendChild(table_node)
-
         root.appendChild(tc)
 
     @before.outline
     def time_outline(scenario, order, outline, reasons_to_fail):
         scenario.outline_started = datetime.now()
         pass
-
-    @after.outline
-    def create_test_case_outline(scenario, order, outline, reasons_to_fail):
-        classname = "%s : %s" % (scenario.feature.name, scenario.name)
-        tc = doc.createElement("testcase")
-        tc.setAttribute("classname", classname)
-        tc.setAttribute("name", u'| %s |' % u' | '.join(outline.values()))
-        tc.setAttribute("time", str(total_seconds((datetime.now() - scenario.outline_started))))
-        
-        #Business rules coverage node
-        coverage_node = doc.createElement("coverage")        
-        external_id_tag = ''
-        internal_id_tag = ''
-        br_tag = ''            
-        for tag in scenario.tags:
-            if 'br=' in tag:  
-                br_tag = tag
-                
-            if 'external_id' in tag:
-                external_id_tag = tag
-            
-            if 'internal_id' in tag:
-                internal_id_tag = tag
-                                 
-        br_tag = br_tag.replace('br=','')
-        for splited_br in br_tag.split(';'):
-            if len(splited_br) > 0:
-                br_rule_node = doc.createElement('business-rule')
-                br_rule_text_noe = doc.createTextNode(splited_br)                    
-                br_rule_node.appendChild(br_rule_text_noe)
-                coverage_node.appendChild(br_rule_node)                                         
-        tc.appendChild(coverage_node)
-        internal_id_tag = internal_id_tag.replace('internal_id=','')        
-        external_id_tag = external_id_tag.replace('external_id=','')
-        tc.setAttribute("internalID", internal_id_tag)
-        tc.setAttribute("externalID ", external_id_tag)  
-                               
-            
-        for reason_to_fail in reasons_to_fail:
-            cdata = doc.createCDATASection(reason_to_fail.traceback)
-            failure = doc.createElement("failure")
-            failure.setAttribute("message", reason_to_fail.cause if hasattr(reason_to_fail,"cause") else "")
-            failure.appendChild(cdata)
-            tc.appendChild(failure)
-
-        root.appendChild(tc)
         
     @after.all
     def output_xml(total):
